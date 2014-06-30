@@ -1,0 +1,30 @@
+#!/usr/bin/python
+
+###this program records all audio for a day in the appropriate directory
+## have cron kill it and restart once daily, at 00:00'10 or something.
+## once killed we will have audio.mp3 in the appropriate directory, and if we sleep until the next day, everything
+## should work OK
+import datetime
+
+def getFileName():
+    return "audio.mp3"
+
+def getMP3(day, month, year):
+    return sprintf("$s/%s/%s/%s/%s",
+                   getFileName(),
+                   getAudioBasePath(), year, month, day);
+
+def getAudioBasePath():
+    return "/home/rtav/audio_log"
+
+def getRecordCommand():
+    return "wget live.citr.ca:8000/stream.mp3 -O";
+
+def doRecord():
+    t = datetime.time(datetime.today())
+    cmd = sprintf("%s %s",x
+                  getRecordCommand(),
+                  getMP3(t[0], t[1], t[2]))
+    #execute cmd
+
+doRecord()

@@ -1,0 +1,12 @@
+(1)	Reverse date format to YYYY-MM-DD
+
+(2)	Use ~ (tilde) instead of space in /arch/d
+
+(3)	If file ends in .mp3, play directly.  Otherwise, download.
+	This may be a browser-defined behavior.  We could always for
+	.mp3 include a player.
+
+(4)	Caching of requests---I suppose that once podcasts come into
+	use, this will make sense, if only to avoid unnecessary
+	latency.
+

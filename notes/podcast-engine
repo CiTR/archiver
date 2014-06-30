@@ -1,0 +1,83 @@
+31/May/2013
+
+The Podcast engine can define podcasts from the Archive or
+uploaded as a single file. Either filename or (starTime,endTime) 
+are required.
+
+Podcast:
+	title: string
+	short-title: string
+	id: UUID
+	filename: string
+	startTime: int
+	endTime: int
+	owner: FOREIGN KEY ON user.id
+
+User:
+	name: string
+	username: string
+	password: string
+	descr: string
+	url: string
+	id: UUID
+	
+Playlist:
+	title: string
+	short-title: string
+	id: UUID
+	podcasts: list<podcast>
+	
+A Playlist can be used similarly to an album.  Thus, anyone with an account can 
+upload files A.mp3, B.mp3 and C.mp3 producing p-a, p-b and p-c.  
+
+They may be accessed from e.g. http://airtime/archive/pc/p-a
+
+These three podcasts may be put into a playlist pl-1.  Thus the playlist could be ac-
+cessed from http://airtime/archive/pl/pl-1
+
+Podcasts and playlists may be downloaded or streamed, Therefore the URL scheme should 
+be complicated further, but archive may be truncated to /arc
+
+/arc/(d|s)/(pl|pc|startTime--endTime)/(short-title)
+/arc/d/pl/pl-1 
+/arc/s/pl/pl-1
+
+These short, useful URLs will allow for the efficient dissemination of playlists
+and podcasts.  URLs should not have an additional 'directory level' for users, e.g. 
+/arc/d/pl/userA/pl-1.  This is unnecessary, and we will simply globally restrict 
+playlist names, as well as forbidding anyone to create a playlist containing
+another user's name, etc, tho this could of course be relaxed.
+
+STREAMING
+
+/arc/s/startTime--endTime
+
+This will stream from startTime--endTime.
+
+/arc/s/startTime
+
+This will stream from startTime ongoing
+
+/arc/s/
+
+Stream may have options:
+m3u=true
+
+Do not actually stream content; return an m3u file containing a URL to the content.
+
+This will stream from the current time ongoing, subject to availability, buffered 
+~30s? at a time.
+
+DOWNLOADING
+
+/arc/d/startTime--endTime
+
+This will download from startTime to Endtime
+
+Downloading of podcasts and playlists is as above.
+
+Download may have options:
+archive=true
+	This option allows for generation of an archive containing the file(s) 
+	that would otherwise be combined and downloaded.
+
