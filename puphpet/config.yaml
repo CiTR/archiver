@@ -71,7 +71,7 @@ vagrantfile-local:
 server:
     install: '1'
     packages:
-        - lib64asound2
+        - libasound2
         - libsndfile1
         - libmp3lame0
 firewall:
