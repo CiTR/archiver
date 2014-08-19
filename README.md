@@ -6,7 +6,7 @@ citr audio archiver written in C and Python - including web-interface for downlo
 authored by rtav
 
 
-To get started:
+To set up the development environment:
 
 -first install vagrant on your machine (see http://www.vagrantup.com/)
 
