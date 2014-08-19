@@ -93,7 +93,7 @@ apache:
             servername: archive.citr.dev
             serveraliases:
                 - archive.citr.dev
-            docroot: /var/www/archiver
+            docroot: /var/www/archive
             port: '80'
             setenv:
                 - 'APP_ENV dev'
