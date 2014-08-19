@@ -37,7 +37,7 @@ vagrantfile-local:
         synced_folder:
             XzdsXWyUA3XE:
                 source: ./web_root
-                target: /var/www
+                target: /var/www/web_root
                 sync_type: default
                 rsync:
                     args:
@@ -49,7 +49,7 @@ vagrantfile-local:
                     auto: 'false'
             kdeLOnOOWulE:
                 source: ./citrlog
-                target: /citrlog
+                target: /var/www/citrlog
                 sync_type: default
                 rsync:
                     auto: 'false'
@@ -93,7 +93,7 @@ apache:
             servername: archive.citr.dev
             serveraliases:
                 - archive.citr.dev
-            docroot: /var/www/archive
+            docroot: /var/www/web_root
             port: '80'
             setenv:
                 - 'APP_ENV dev'
