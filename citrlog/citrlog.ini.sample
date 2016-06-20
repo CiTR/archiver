@@ -1,0 +1,21 @@
+[main]
+#Path to where you want the audio log to save (e.g. /mnt/audiolog/)
+audiologbase=
+#The logfile path (e.g. /mnt/audiolog/audilog.log)
+logfile=
+#If the mount point for audiolog is detachable
+detach=true
+#
+# It is not recommended that you alter any of the values below this line.
+#
+# Select audio device for recording
+device=default
+#Set the Sample Rate
+# Default samplerate = 44100
+samplerate=44100
+#Mp3 kbit/sec -- 128 is default(eg. 92/128/192)
+# Default mp3rate=128
+mp3rate=128
+# The size of the buffer
+# default buffersize=44100
+buffersize=44100
