@@ -115,8 +115,7 @@ char* mkyeardir(int year);
 char* mkmonthdir(int year, int month);
 char* mkdaydir(int year, int month, int day);
 int start(int argc, char *argv[]);
-int handler(void* user, const char* section,
-	    const char* name, const char* value);
+int handler(void* user, const char* section,const char* name, const char* value);
 void logs(char *str);
 void logsi(char *str, int i);
 int setAttribute(char **pPAttr, const char *str);
@@ -141,8 +140,7 @@ void sighup_handler(int sig);
 
 //function implementations
 
-void dataPush(short *buf, struct timespec *ts)
-{
+void dataPush(short *buf, struct timespec *ts){
   data_t *pTemp;
   data_t *pNew = (data_t *)malloc(sizeof(data_t));
 
