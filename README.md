@@ -17,7 +17,7 @@ Archiver written by rtav and web interface written by Brad Winter.
 
 1.5) Optional - setup a storage RAID for your archiver machine. The archiver generates about 250GB of audio per year, depending on the recording bitrate. We recommend also configuring your RAID in a setup that allows easy growth. An alternative is having an easily hot-swapable drive that allows your technicians to swap in new hard drives when the existing one gets full. This allows long term storage of your audio and conversion to archival formats. You can configure the archiver to store the audio at any location, although we *highly* recommend a local device is used rather than a location on the network.
 
-2) Install alsa, libapache2-mod-python and LAMP stack (some server distros like ubuntu give you the option to install this when installing the operating system)
+2) Install alsa, lame, libapache2-mod-python and LAMP stack (some server distros like ubuntu give you the option to install this when installing the operating system)
 
 3) Enable the mod_rewrite module and on some systems also mod_python. On Ubuntu and other debian-based systems, simply run "sudo a2enmod rewrite && sudo service apache2 restart". On other systems, simply uncomment the module line in httpd.conf. On some systems, you may also have to run "a2enmod python" (it's enabled by default on Ubuntu).
 
@@ -31,6 +31,6 @@ Archiver written by rtav and web interface written by Brad Winter.
 
 8) Reboot
 
-9) Watch for your files be recorded in the directory you specified in step __. If no audio is being recorded, check that your cronjob ran successfully with ~ps aux | grep archiver~
+9) Watch for your files be recorded in the directory you specified in step 6. If no audio is being recorded, check that your cronjob ran successfully with "ps aux | grep archiver"
 
-10)
+10) Done!
