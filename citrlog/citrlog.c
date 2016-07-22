@@ -31,7 +31,7 @@
 #include <signal.h>
 #include <pthread.h>
 #include <sched.h>
-
+#include <stdbool.h>
 // google ini lib
 #include "ini.h"
 

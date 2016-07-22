@@ -1,5 +1,5 @@
 CC=gcc 
-CFLAGS=--pedantic -Wall -std=c99 -O2
+CFLAGS=-std=gnu99 -Wall -O2
 LIBS=-lasound -lsndfile -lmp3lame
 
 all: citrlog
@@ -7,7 +7,7 @@ all: citrlog
 citrlog: citrlog.o ini.o
 	$(CC) $(LIBS) citrlog.o ini.o -o citrlog
 
-test41.o:
+citrlog.o:
 	$(CC) $(CFLAGS) citrlog.c 
 
 ini.o:
