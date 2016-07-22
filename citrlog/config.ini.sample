@@ -1,7 +1,7 @@
 [main]
-#Path to where you want the audio log to save (e.g. /mnt/audiolog/)
+#Path to where you want the audio log to save (e.g. /mnt/audiolog/). The directory must exist.
 audiologbase=
-#The logfile path (e.g. /mnt/audiolog/audilog.log)
+#The logfile path (e.g. /mnt/audiolog/audilog.log). The file must exist - use the touch command to create it before starting the logger for the first time.
 logfile=
 #If the mount point for audiolog is detachable
 detach=true
