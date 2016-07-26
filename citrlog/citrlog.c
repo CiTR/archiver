@@ -792,6 +792,7 @@ void *processThreadFunction(void *threadid)
 				localtime_r(&data->time, &timeinfo);
 				//increment time
   				//test each mp3 filename to see if it exists. If it does, try next.
+				
 				while(mp3file[0] == (char)0) {
 					//sprintf(mp3file, "%s/%d-second.mp3", mkdaydir(timeinfo.tm_year+1900, timeinfo.tm_mon+1, timeinfo.tm_mday), (int)data->time);
 					//open file handle     
@@ -801,25 +802,26 @@ void *processThreadFunction(void *threadid)
 						continue;
 					}
 					//otherwise, we have a good filename.   
+					logs("In while loop");
 				}
 				//open file handle
 				mp3 = fopen(mp3file, "wb");
 				//encode
 				//  write = lame_encode_buffer_interleaved(lame, data->buffer, configuration.bufferSize, mp3_buffer, MP3_BUFFER_SIZE);
 				write = lame_encode_buffer_interleaved(lame, 
-				data->buffer + (configuration.bufferSize*i*2), 
-				configuration.bufferSize, 
-				mp3_buffer, MP3_BUFFER_SIZE);
+					data->buffer + (configuration.bufferSize*i*2), 
+					configuration.bufferSize, 
+					mp3_buffer, MP3_BUFFER_SIZE);
 				//DEBUG: write pcm files to disk!
-				//write mp3 to disk                                                                                             
+				logs("write mp3 to disk");
 				fwrite(mp3_buffer, write, 1, mp3);
 				//logsi("wrote mp3 bytes: ", write);
 				//encoder flush
 				write = lame_encode_flush_nogap(lame, mp3_buffer, MP3_BUFFER_SIZE);
-				//write flushed mp3 buffer to disk                                                                              
+				logs("write flushed mp3 buffer to disk");
 				fwrite(mp3_buffer, write, 1, mp3);
 				//logsi("wrote mp3 bytes: ", write);
-				//close mp3
+				logs("close mp3");
 				fclose(mp3);
 
 				//debug before freeing
