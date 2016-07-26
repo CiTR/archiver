@@ -4,5 +4,5 @@ sleep 1
 #If you deviated from default:
 #su -c "<<PATH_TO_C_FILE>> <<PATH_TO_CONFIG_FILE>>" user_name
 #Default:
-su -c /home/archiver/citrlog/citrlog /home/archiver/citrlog/config.ini <user_name>
+su -c "/home/archiver/citrlog/citrlog /home/archiver/citrlog/config.ini" <user_name>
 exit 0

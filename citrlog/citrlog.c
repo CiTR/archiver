@@ -465,8 +465,15 @@ void logs(char *str)
  int main(int argc, char *argv[]) 
  {
  	pid_t pID;
- 	
- 	configuration.pConfigLocation = "config.ini";
+  	DEBUG("CiTR Audio Logger, v. 1.0.1, Viola");
+  	DEBUG("16/03/2015 - ");
+	initConfiguration(&configuration);
+  	if(argc >= 2) {
+    		configuration.pConfigLocation = argv[1];
+  	}
+  	else {
+    		configuration.pConfigLocation = "config.ini";
+  	}		
 
  	rereadConfig();
  	logSession();
@@ -765,10 +772,12 @@ void *processThreadFunction(void *threadid)
 	DEBUG("Process thread running...");
 	lame = initLAME();
 
-	while(true) {		
+	while(true) {
+		logs("Waiting for audio data to become availible ..."); 		
     	//wait for data to be available
 		pthread_cond_wait(&configuration.dataCond, &configuration.dataMutex);
     	//we have data
+		logs("Audio data availible, proceeding.");
 		data = dataPop();
 		while(data != NULL) {
 			for(i = 0; i < data->seconds; i++) {
@@ -815,9 +824,9 @@ void *processThreadFunction(void *threadid)
 
 				//debug before freeing
 				//DEBUG
-				// strftime(msg, sizeof(msg), "%D %T", &timeinfo);
+				strftime(msg, sizeof(msg), "%D %T", &timeinfo);
 
-				// sprintf(msgg, "Logged %s (%d)", msg, (int)data->time);
+				sprintf(msgg, "Logged %s (%d)", msg, (int)data->time);
 				logs(msgg);
 
 				data->time = data->time + 1;

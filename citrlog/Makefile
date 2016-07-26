@@ -8,4 +8,4 @@ citrlog:
 	$(CC) $(CFLAGS) -o citrlog citrlog.c ini.c $(LIBS)
 
 clean:
-	rm *.o citrlog
+	rm citrlog
