@@ -36,3 +36,18 @@ Archiver written by rtav and web interface written by Brad Winter.
 9) Watch for your files be recorded in the directory you specified in step 6. If no audio is being recorded, check that your cronjob ran successfully with "ps aux | grep archiver"
 
 10) Done!
+
+Compilation instructions
+
+1) Install make, gcc, build-essential, and the libraries for lame, libsndfile.h, and libasound:
+
+sudo apt-get install make gcc build-essential libasound2-dev libmp3lame-dev libsndfile1-dev
+
+2) Navigate to citrlog/src/
+
+3) Run make. You may need to do this with elevated permissions, depending on your user and the location you cloned the repository to.
+
+4) Move the compiled *citrlog* file to the citrlog folder, naming appropiately depending on your architecture. 
+
+
+
