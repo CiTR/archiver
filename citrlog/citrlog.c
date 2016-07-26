@@ -23,7 +23,6 @@
 #include <sndfile.h>
 #include <time.h>
 #include <lame/lame.h>
-#include <time.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>

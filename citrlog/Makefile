@@ -1,16 +1,11 @@
 CC=gcc 
-CFLAGS=-std=gnu99 -Wall -O2
-LIBS=-lasound -lsndfile -lmp3lame
+CFLAGS=-std=gnu99 -Wall -O2 -g
+LIBS=-lasound -lsndfile -lmp3lame -pthread
 
 all: citrlog
 
-citrlog: citrlog.o ini.o
-	$(CC) $(LIBS) citrlog.o ini.o -o citrlog
+citrlog:
+	$(CC) $(CFLAGS) -o citrlog citrlog.c ini.c $(LIBS)
 
-citrlog.o:
-	$(CC) $(CFLAGS) citrlog.c 
-
-ini.o:
-	$(CC) $(CFLAGS) ini.c
 clean:
 	rm *.o citrlog

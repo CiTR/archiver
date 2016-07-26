@@ -3,9 +3,13 @@
 inih is released under the New BSD license (see LICENSE.txt). Go to the project
 home page for more info:
 
-http://code.google.com/p/inih/
+https://github.com/benhoyt/inih
 
 */
+
+#if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
+#define _CRT_SECURE_NO_WARNINGS
+#endif
 
 #include <stdio.h>
 #include <ctype.h>
@@ -37,16 +41,23 @@ static char* lskip(const char* s)
     return (char*)s;
 }
 
-/* Return pointer to first char c or ';' comment in given string, or pointer to
-   null at end of string if neither found. ';' must be prefixed by a whitespace
-   character to register as a comment. */
-static char* find_char_or_comment(const char* s, char c)
+/* Return pointer to first char (of chars) or inline comment in given string,
+   or pointer to null at end of string if neither found. Inline comment must
+   be prefixed by a whitespace character to register as a comment. */
+static char* find_chars_or_comment(const char* s, const char* chars)
 {
-    int was_whitespace = 0;
-    while (*s && *s != c && !(was_whitespace && *s == ';')) {
-        was_whitespace = isspace((unsigned char)(*s));
+#if INI_ALLOW_INLINE_COMMENTS
+    int was_space = 0;
+    while (*s && (!chars || !strchr(chars, *s)) &&
+           !(was_space && strchr(INI_INLINE_COMMENT_PREFIXES, *s))) {
+        was_space = isspace((unsigned char)(*s));
         s++;
     }
+#else
+    while (*s && (!chars || !strchr(chars, *s))) {
+        s++;
+    }
+#endif
     return (char*)s;
 }
 
@@ -59,10 +70,8 @@ static char* strncpy0(char* dest, const char* src, size_t size)
 }
 
 /* See documentation in header file. */
-int ini_parse_file(FILE* file,
-                   int (*handler)(void*, const char*, const char*,
-                                  const char*),
-                   void* user)
+int ini_parse_stream(ini_reader reader, void* stream, ini_handler handler,
+                     void* user)
 {
     /* Uses a fair bit of stack (use heap instead if you need to) */
 #if INI_USE_STACK
@@ -87,8 +96,8 @@ int ini_parse_file(FILE* file,
     }
 #endif
 
-    /* Scan through file line by line */
-    while (fgets(line, INI_MAX_LINE, file) != NULL) {
+    /* Scan through stream line by line */
+    while (reader(line, INI_MAX_LINE, stream) != NULL) {
         lineno++;
 
         start = line;
@@ -102,19 +111,20 @@ int ini_parse_file(FILE* file,
         start = lskip(rstrip(start));
 
         if (*start == ';' || *start == '#') {
-            /* Per Python ConfigParser, allow '#' comments at start of line */
+            /* Per Python configparser, allow both ; and # comments at the
+               start of a line */
         }
 #if INI_ALLOW_MULTILINE
         else if (*prev_name && *start && start > line) {
-            /* Non-black line with leading whitespace, treat as continuation
-               of previous name's value (as per Python ConfigParser). */
+            /* Non-blank line with leading whitespace, treat as continuation
+               of previous name's value (as per Python configparser). */
             if (!handler(user, section, prev_name, start) && !error)
                 error = lineno;
         }
 #endif
         else if (*start == '[') {
             /* A "[section]" line */
-            end = find_char_or_comment(start + 1, ']');
+            end = find_chars_or_comment(start + 1, "]");
             if (*end == ']') {
                 *end = '\0';
                 strncpy0(section, start + 1, sizeof(section));
@@ -125,19 +135,18 @@ int ini_parse_file(FILE* file,
                 error = lineno;
             }
         }
-        else if (*start && *start != ';') {
+        else if (*start) {
             /* Not a comment, must be a name[=:]value pair */
-            end = find_char_or_comment(start, '=');
-            if (*end != '=') {
-                end = find_char_or_comment(start, ':');
-            }
+            end = find_chars_or_comment(start, "=:");
             if (*end == '=' || *end == ':') {
                 *end = '\0';
                 name = rstrip(start);
                 value = lskip(end + 1);
-                end = find_char_or_comment(value, '\0');
-                if (*end == ';')
+#if INI_ALLOW_INLINE_COMMENTS
+                end = find_chars_or_comment(value, NULL);
+                if (*end)
                     *end = '\0';
+#endif
                 rstrip(value);
 
                 /* Valid name[=:]value pair found, call handler */
@@ -150,6 +159,11 @@ int ini_parse_file(FILE* file,
                 error = lineno;
             }
         }
+
+#if INI_STOP_ON_FIRST_ERROR
+        if (error)
+            break;
+#endif
     }
 
 #if !INI_USE_STACK
@@ -160,9 +174,13 @@ int ini_parse_file(FILE* file,
 }
 
 /* See documentation in header file. */
-int ini_parse(const char* filename,
-              int (*handler)(void*, const char*, const char*, const char*),
-              void* user)
+int ini_parse_file(FILE* file, ini_handler handler, void* user)
+{
+    return ini_parse_stream((ini_reader)fgets, file, handler, user);
+}
+
+/* See documentation in header file. */
+int ini_parse(const char* filename, ini_handler handler, void* user)
 {
     FILE* file;
     int error;
