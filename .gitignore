@@ -1,1 +1,4 @@
 *.ini
+
+#ignore compiled binary that hasn't been moved out of src folder
+citrlog/src/citrlog
