@@ -12,7 +12,7 @@ Archiver written by rtav and web interface written by Brad Winter.
 Setup instructions
 ------------------
 
-All commands given are for Ubuntu Server 16.04 and assume you have followed each step as written. Adapt the commands to your own distro and preference: **
+All commands given are for Ubuntu Server 16.04 and assume you have followed each step as written. Adapt the commands to your own distro and preference:
 
 1. Machine selection - we recommend you pick stable hardware for your archiver. Unless you set up two archivers for redundancy, this machine should never be turned off, especially if used in a setting where it logs your radio station's audio for CRTC compliance or if it is used to generate podcast audio. RAID ready hard drives are also recommended for better reliability.
 
@@ -29,7 +29,7 @@ All commands given are for Ubuntu Server 16.04 and assume you have followed each
 5. Clone this repo to your /home folder
     <pre><code>cd /home && sudo git clone https://github.com/CiTR/archiver.git</code></pre>
 
-6. Make sure your vhosts file is set correctly, especially the rewrite rules. An example is found in the sample folder as "archiver.conf": <pre><code>sudo cp /home/archiver/samples/archiver.conf /etc/apache2/sites-enabled/</code></pre>. The defaults in this file should work automatically provided you haven't deviated from these instructions.
+6. Make sure your vhosts file is set correctly, especially the rewrite rules. An example is found in the sample folder as "archiver.conf": <pre><code>sudo cp /home/archiver/samples/archiver.conf /etc/apache2/sites-enabled/</code></pre>The defaults in this file should work automatically provided you haven't deviated from these instructions.
 
 7. Edit the config file located at citrlog/config.ini.sample and save it to config.ini. You will have to define the "audiologbase" line and "logfile" line to a place that works for your setup. Audiologbase is where all your logged audio saves, so pick your folder where your RAID is mounted if you have one.
 
