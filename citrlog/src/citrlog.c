@@ -773,11 +773,9 @@ void *processThreadFunction(void *threadid)
 	lame = initLAME();
 
 	while(true) {
-		logs("Waiting for audio data to become availible ..."); 		
-    	//wait for data to be available
+    		//wait for data to be available
 		pthread_cond_wait(&configuration.dataCond, &configuration.dataMutex);
-    	//we have data
-		logs("Audio data availible, proceeding.");
+	    	//we have data
 		data = dataPop();
 		while(data != NULL) {
 			for(i = 0; i < data->seconds; i++) {
@@ -794,7 +792,7 @@ void *processThreadFunction(void *threadid)
   				//test each mp3 filename to see if it exists. If it does, try next.
 				
 				while(mp3file[0] == (char)0) {
-					//sprintf(mp3file, "%s/%d-second.mp3", mkdaydir(timeinfo.tm_year+1900, timeinfo.tm_mon+1, timeinfo.tm_mday), (int)data->time);
+					sprintf(mp3file, "%s/%d-second.mp3", mkdaydir(timeinfo.tm_year+1900, timeinfo.tm_mon+1, timeinfo.tm_mday), (int)data->time);
 					//open file handle     
 					if(stat(mp3file, &status) != -1) { // file exists.
 						data->ts->tv_sec = data->ts->tv_sec + 1;
@@ -802,7 +800,6 @@ void *processThreadFunction(void *threadid)
 						continue;
 					}
 					//otherwise, we have a good filename.   
-					logs("In while loop");
 				}
 				//open file handle
 				mp3 = fopen(mp3file, "wb");
@@ -813,7 +810,7 @@ void *processThreadFunction(void *threadid)
 					configuration.bufferSize, 
 					mp3_buffer, MP3_BUFFER_SIZE);
 				//DEBUG: write pcm files to disk!
-				logs("write mp3 to disk");
+				//write mp3 to disk
 				fwrite(mp3_buffer, write, 1, mp3);
 				//logsi("wrote mp3 bytes: ", write);
 				//encoder flush
@@ -821,7 +818,7 @@ void *processThreadFunction(void *threadid)
 				logs("write flushed mp3 buffer to disk");
 				fwrite(mp3_buffer, write, 1, mp3);
 				//logsi("wrote mp3 bytes: ", write);
-				logs("close mp3");
+				//close mp3
 				fclose(mp3);
 
 				//debug before freeing
