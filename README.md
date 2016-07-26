@@ -29,6 +29,8 @@ Archiver written by rtav and web interface written by Brad Winter.
 
 7) Copy the example cronjob form samples/archive_cron.logger somewhere (such as /etc). If you cloned the repo to /home the defaults will work. Add a cronjob for that script to run on reboot and once every day at 4:30AM (or another unimportant time). Having the script run each day restarts the archive process so that the recording doesn't drift and ensures long-term stability of the machine.
 
+8) Add your user to the audio group: sudo usermod -a -G audio <username>
+
 8) Reboot
 
 9) Watch for your files be recorded in the directory you specified in step 6. If no audio is being recorded, check that your cronjob ran successfully with "ps aux | grep archiver"
