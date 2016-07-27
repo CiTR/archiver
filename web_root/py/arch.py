@@ -6,7 +6,7 @@ from time import mktime
 import sys
 import tempfile
 import os
-import configparser
+import ConfigParser
 
 #####
 # CiTR Radio Archive Access
@@ -20,7 +20,8 @@ import configparser
 #######
 
 #enter the location of the the config.ini file. This default should work:
-configLocation = os.normpath("/home/archiver/citrlog/config.ini")
+configLocation = os.path.normpath("/home/archiver/citrlog/config.ini")
+
 
 def joinMP3s(files):
 	#output = ##find output file name
@@ -66,17 +67,17 @@ class ArchiveJoiner:
 
 def main():
     __startTime = datetime.strptime("21-5-2013 15:00:00", "%d-%m-%Y %H:%M:%S")
-	print __startTime
+    print __startTime
     __endTime = datetime.strptime("21-5-2013 16:00:00", "%d-%m-%Y %H:%M:%S")
     aj = ArchiveJoiner(__startTime, __endTime)
     mp3 = aj.getMP3()
-	print "mp3 is %s" % (mp3)
+    print "mp3 is %s" % (mp3)
 
 if __name__ == "__main__":
     main()
 
 def outputPSP(req, n, variables):
-	req.content_type = "text/html"
+    req.content_type = "text/html"
     p = psp.PSP(req, "psp/%s.psp" % (n),variables)
     p.run()
 
@@ -85,20 +86,20 @@ def download(req,fname):
 	req.sendfile("/tmp/%s.mp3" % (fname))
 
 def download(req,startTime,endTime):
-	__startTime = datetime.strptime(startTime, "%d-%m-%Y %H:%M:%S")
-	__endTime = datetime.strptime(endTime, "%d-%m-%Y %H:%M:%S")
+    __startTime = datetime.strptime(startTime, "%d-%m-%Y %H:%M:%S")
+    __endTime = datetime.strptime(endTime, "%d-%m-%Y %H:%M:%S")
 
     #Read the audiologbase from config.ini
-    settings = configparser.ConfigParser()
+    settings = ConfigParser.SafeConfigParser()
     settings.read(configLocation)
     archive = settings.get('main', 'audiologbase')
 
-	aj = ArchiveJoiner(__startTime, __endTime, archive)
-	mp3 = aj.getMP3()
-	f = os.stat(mp3)
-	req.set_content_length(f.st_size)
-	req.headers_out['Content-Disposition'] = "attachment; filename=archive.mp3"
-	req.sendfile(mp3)
+    aj = ArchiveJoiner(__startTime, __endTime, archive)
+    mp3 = aj.getMP3()
+    f = os.stat(mp3)
+    req.set_content_length(f.st_size)
+    req.headers_out['Content-Disposition'] = "attachment; filename=archive.mp3"
+    req.sendfile(mp3)
 
 def archive(req,starTime,hours,minutes,seconds):
 	arch = ArchiveRequest(startTime, hours, minutes, seconds)
