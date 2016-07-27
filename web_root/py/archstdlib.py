@@ -17,20 +17,52 @@ import time
 # ###### #####   #   ## ##
 #######
 
+def getStartAndEnd(files):
+	start = files[0]
+        end = files[len(files)-1]
+        #convert to integers                                                                                          
+        start = int(start[:start.index("-")])
+        end = int(end[:end.index("-")])
+	return (start,end)
+
+def getCacheName(files):
+	se = getStartAndEnd(files)
+	return "%d-%d-cache.mp3" % (se[0], se[1])
+
+def getCachePath(files):
+	__base = "/home/rtav/audio_log/v2/cache"
+	name = getCacheName(files)
+	return "%s/%s" % (__base, name)
+
+def isInCache(files):
+	f = getCachePath(files)
+	exists = False 
+	try:
+		if os.stat(f):
+			exists = True
+	except:
+		pass
+	return exists
+                                        
+
 
 def joinMP3s(files):
 	#output = ##find output file name
-	output = tempfile.mkstemp(".mp3")
-	ofh = open(output[1], 'wb')
-	for f in files:
-		fh = open(f, 'rb')
-		ofh.write(fh.read())
-		fh.close()
-	ofh.close()
-	return output[1]
+	#get name
+	fn = getCachePath(files)
+	#check if is in cache
+	if isInCache(files) == False:
+		ofh = open(fn, 'wb')		
+		for f in files:
+			fh = open(f, 'rb')
+			ofh.write(fh.read())
+			fh.close()
+		ofh.close()
+	#return the cache name
+	return fn
 
 class ArchiveStreamer:
-	__base = "/home/rtav/audio_log/v1/"
+	__base = "/mnt/audio-stor/log/"
 	#this is the number of seconds we should lag so as to avoid jittery 
 	#streaming
 	LAG = 20
