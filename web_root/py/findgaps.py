@@ -55,13 +55,16 @@ class GapFinder:
 	
 
 def main():
-	gf = GapFinder(date(2013, 5, 29))
+	gf = GapFinder(date(2013, 5, 28))
 	last = 0
 	for gap in gf.getGaps():
 		lt = localtime(gap)
 		last = gap
-		s = strftime("%a, %d %b %Y %H:%M:%S +0000", lt)
-		print "Gap for %s (%d)" % (s,gap)
+		if !(gap == (last+1)):
+			s = strftime("%a, %d %b %Y %H:%M:%S +0000", lt)
+			print "Gap for %s (%d)" % (s,gap)
+		else:
+			#otherwise, print nothing
 	
 
 if __name__ == "__main__":

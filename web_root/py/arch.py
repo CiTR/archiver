@@ -102,5 +102,4 @@ def index(req,startTime="17-04-2013 00:00:00"):
 	outputPSP(req, "index", {})
 
 
-def hello(req, say="NOTHING"):
-	outputPSP(req, "hello")
+

@@ -32,7 +32,9 @@ class ArchiveJoiner():
 			files.append(ai.getArchiveBetween(self.__startTime, self.__endTime)
 		else: #multiple days
 		        while k < self.__diff.days: 
-
+				    ai = ArchiveInfo(self.__start+k)
+				    if k == 0:
+					    files.append(ai.getArchiveBetween(self.__startTime, #end of day))
 class ArchiveInfo():
 	def __init__(self,dt=None):
 		if dt is None:
