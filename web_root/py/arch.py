@@ -20,10 +20,7 @@ import configparser
 #######
 
 #enter the location of the the config.ini file. This default should work:
-configLocation = os.normpath("../../citrlog/config.ini")
-#Load the config
-settings = configparser.ConfigParser()
-config = settings.read(configLocation)
+configLocation = os.normpath("/home/archiver/citrlog/config.ini")
 
 def joinMP3s(files):
 	#output = ##find output file name
@@ -92,7 +89,10 @@ def download(req,startTime,endTime):
 	__endTime = datetime.strptime(endTime, "%d-%m-%Y %H:%M:%S")
 
     #Read the audiologbase from config.ini
-    archive = config.get('Main', 'audiologbase')
+    settings = configparser.ConfigParser()
+    settings.read(configLocation)
+    archive = settings.get('main', 'audiologbase')
+
 	aj = ArchiveJoiner(__startTime, __endTime, archive)
 	mp3 = aj.getMP3()
 	f = os.stat(mp3)
