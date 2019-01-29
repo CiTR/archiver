@@ -2,36 +2,211 @@
 <html>
 <head>
 <title>CiTR Archiver</title>
-<h1>CiTR Archiver</h1></head>
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.bundle.min.js" integrity="sha384-zDnhMsjVZfS3hiP7oCBRmfjkQC4fzxVxFhBx8Hkz2aZX8gEvA/jsP3eXRCvzTofP" crossorigin="anonymous"></script>
 </head>
 <body>
-<hr/>
-<p>
-</p>
-<!-- <p>Archive begins at 21-05-2013 14:08:52<br/> -->
-Coverage may be spotty.</p>
-<p>Instructions:</p>
-<p>Date/Time format: DD-MM-YYYY HH:MM:SS</p>
-<ol>
-<li>Select Archive.  USB Drive is, hopefully, most recent/reliable.</li>
-<li>Enter Start Date/Time.</li>
-<li>Enter End Date/Time.</li>
-<li>Click submit.</li>
-<li>Save audio file.</li>
-</ol>
-<%
+<div class="container">
+    <h1>CiTR Archiver</h1>
+    <hr/>
+    <p>Archive begins at 21-05-2013 14:08:52<br/>
+    Coverage may be spotty.</p>
+    <p>All radio streams now archived on USB Drive</p>
+    <p>"Preview" buttons allow you to listen to the first or last 5 minutes of the given time period. To adjust how long the preview is, use the Preview Length input box</p>
+    <div class="d-none">
+        <p>Instructions:</p>
+        <p>Date/Time format: DD-MM-YYYY HH:MM:SS</p>
+        <ol>
+        <li>Enter Start Date/Time.</li>
+        <li>Enter End Date/Time.</li>
+        <li>Click submit.</li>
+        <li>Save audio file.</li>
+        </ol>
+
+        <p>To use this archive directly, it accepts startTime and endTime as URL-encoded strings:<br/>
+        http://airtime.citr.ca:8032/py/archv2?startTime=...&endTime=...<br/><tt>OR</tt><br/>
+        http://airtime.citr.ca:8032/archive/startTime--endTime</p>
+        <br/>
+    </div>
+<% 
 if "timeError" in globals():
    print "<b>Error: Time format invalid.</b>"
 
 %>
-<form method="GET" action="/py/arch/download">
-    Archive:
-    <br/>
-    Start Time: <input type="text" name="startTime" /><br/>
-    End Time: <input type="text" name="endTime" /><br/>
-    <input type="submit"/>
-</form>
-<hr/>
-Bugs, comments: <a href="mailto:robin@ubicee.net">robin AT ubicee dot net</a>
+    <div class="card">
+        
+            <div class="card-body">
+                <form method="GET" action="/py-test/arch/download" class="row">
+                    <label for="archive" class="col-md-4">Archive Source:</label>
+                    <select name="archive" class="col-md-8">
+                        <option value="/mnt/audio_stor/log" selected="selected">USB Drive</option>
+                        <option value="/home/rtav/audio_log/v1">Hard Drive</option>
+                    </select>
+                    <input type="hidden" name="startTime" id="startTime" data-date-field="#startTime-date" data-time-field="#startTime-time">
+                    <input type="hidden" name="endTime" id="endTime" data-date-field="#endTime-date" data-time-field="#endTime-time">
+                    <input type="submit" class="d-none" id="archiveSubmit">
+                </form>
+                <div class="row">
+                    <label for="startTime" class="col-md-4">Start:</label>
+                    <input type="date" name="startTime-date" id="startTime-date" class="col-md-4" data-updates="#startTime" required>
+                    <input type="time" step="1" name="startTime-time" id="startTime-time" class="col-md-4" data-updates="#startTime" required value="12:00">
+                </div>
+                <div class="row">
+                    <label for="endTime" class="col-md-4">End:</label>
+                    <input type="date" name="endTime-date" id="endTime-date" class="col-md-4" data-updates="#endTime" required>
+                    <input type="time" step="1" name="endTime-time" id="endTime-time" class="col-md-4" data-updates="#endTime" required value="13:00">
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col-md-4">
+                        <button class="btn btn-primary btn-block mb-3" id="previewFirst">Preview Start</button>
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn btn-primary btn-block mb-3" id="previewLast">Preview End</button>
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn btn-primary btn-block mb-3" data-target="#archiveSubmit">Download</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <audio id="preview" controls class="col-sm-12">
+                        <source id="preview-src" type="audio/mp3">
+                    </audio>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label for="preview-minutes">Preview Length: </label>
+                        <input name="preview-minutes" id="preview-minutes" type="number" value="5" style="max-width:100px"> Minutes
+                    </div>
+                </div>
+            </div>
+    </div>
+
+
+    <script>
+        Date.prototype.toDateInputValue = (function() {
+            var local = new Date(this);
+            local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+            return local.toJSON().slice(0,10);
+        });
+
+        $(function() {
+            function getDateObjFromDateTimeField(dateTimeField) {
+                if ($(dateTimeField).is('[data-time-field][data-date-field]')) {
+                    var timeField = $(dateTimeField).data('time-field');
+                    var dateField = $(dateTimeField).data('date-field');
+                    var dateTimeObj = new Date($(dateField).val()+' '+$(timeField).val());
+                    return dateTimeObj;
+                }
+
+                return false;
+            }
+
+            $('#preview-btn').click(function () {
+                var srcUrl = $('form').attr('action')+"?"+$('form').serialize();
+                $('#preview-src').attr('src', srcUrl);
+
+                var audio = document.getElementById('preview');
+                audio.load();
+                audio.play();
+            });
+
+            $('#previewFirst, #previewLast').click(function () {
+                var addMinutes = $('#preview-minutes').val();
+
+                if ($(this).attr('id') == 'previewFirst') {
+                    var startFieldName = '#startTime';
+                    var endFieldName = '#endTime';
+                } else {
+                    var startFieldName = '#endTime';
+                    var endFieldName = '#startTime';
+                    var addMinutes = addMinutes * -1;
+                }
+
+                var startField = $(startFieldName);
+                var startFieldVal = $(startField).val();
+                var endField = $(endFieldName);
+                var endFieldVal = $(endField).val();
+                var form = $(startField).parents('form').first();
+
+                var startTime = getDateObjFromDateTimeField(startField);
+                var newEndTime = startTime;
+                newEndTime.setMinutes(startTime.getMinutes() + addMinutes);
+
+                var formattedTime = newEndTime.toLocaleTimeString("en-GB");
+                var formattedDate = newEndTime.toLocaleDateString("en-GB");
+                formattedDate = formattedDate.replace(/[/]/gi, "-");
+
+                $(endField).val(formattedDate+" "+formattedTime);
+
+                var srcUrl = $('form').attr('action')+"?"+$('form').serialize();
+
+                $(endField).val(endFieldVal);
+
+                $('#preview-src').attr('src', srcUrl);
+
+                var audio = document.getElementById('preview');
+                audio.load();
+                audio.play();
+            });
+
+            $('[data-updates]').change(function () {
+                var updateField = $($(this).data('updates'));
+                if ($(updateField).is('[data-time-field][data-date-field]')) {
+                    var dateTimeObj = getDateObjFromDateTimeField(updateField);
+                    var formattedTime = dateTimeObj.toLocaleTimeString("en-GB");
+                    var formattedDate = dateTimeObj.toLocaleDateString("en-GB");
+                    formattedDate = formattedDate.replace(/[/]/gi, "-");
+
+                    $(updateField).val(formattedDate+" "+formattedTime);
+                }
+            });
+
+            $('#startTime-date').change(function () {
+                if ($(this).val() !== "" && $('#endTime-date').val() === "") {
+                    $('#endTime-date').val($(this).val());
+                    $('#endTime-date').trigger('change');
+                } else if ($(this).val() !== "" && $('#endTime-date').val() < $(this).val()) {
+                    $('#endTime-date').val($(this).val());
+                    $('#endTime-date').trigger('change');
+                }
+            });
+
+            $('#endTime-date').change(function () {
+                if ($(this).val() !== "" && $('#startTime-date').val() === "") {
+                    $('#startTime-date').val($(this).val());
+                    $('#startTime-date').trigger('change');
+                }
+            });
+
+            $('button[data-target]').click(function (e) {
+                e.preventDefault();
+
+                var target = $(this).data('target');
+
+                $(target).trigger('click');
+            });
+
+            $('form').submit(function () {
+                $(this).find(':disabled').each(function () {
+                    $(this).prop("disabled", false);
+                });
+            });
+
+            var yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            $('#startTime-date').val(yesterday.toDateInputValue()).trigger('change');
+        });
+    </script>
+
+    <hr/>
+    Bugs, comments: technicalmanager at citr.ca
+</div>
+
 </body>
 </html>
