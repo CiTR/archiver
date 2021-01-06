@@ -46,7 +46,7 @@ su -c "/usr/local/bin/citrlog /usr/local/etc/citrlog.ini" logger
 
 (IV) DEBUGGING
 
-No progam is ever free of bugs.  There are, as Donald Rumself informs us, known knowns, known unknowns, and unknown unknowns. The things that we do not know we do not know are the most difficult to fix.  And often we will know something is amiss, but we will not know what it is.  If we are lucky, our problems are known knowns: we both know the problem and its cause. 
+No progam is ever free of bugs.  There are, as Donald Rumsfeld informs us, known knowns, known unknowns, and unknown unknowns. The things that we do not know we do not know are the most difficult to fix.  And often we will know something is amiss, but we will not know what it is.  If we are lucky, our problems are known knowns: we both know the problem and its cause. 
 
 If you make any modifcations to this program, I would appreciate it if you would send the modifcations to robin@ubicee.net
 
